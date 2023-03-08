@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager,AbstractBaseUser,PermissionsMixin
-
+from django.urls import reverse
+from django.template.defaultfilters import slugify
 
 class UserManager(BaseUserManager):
     def create_user(self,email,name,password=None):
@@ -40,7 +41,7 @@ class UserAccount(AbstractBaseUser,PermissionsMixin):
 
     class Meta:
         verbose_name = 'user'
-        verbose_name_plural = 'users'
+        verbose_name_plural = 'users'                               
 
     def get_full_name(self):
         return self.name
@@ -50,3 +51,33 @@ class UserAccount(AbstractBaseUser,PermissionsMixin):
     
     def __str__(self):
         return self.email
+
+
+class Profile(models.Model):
+    STYLES = [
+        ('Hiphop','Hiphop'),
+        ('FreeStyle','FreeStyle'),
+        ('Contemporary','Contemporary'),
+        ('lock&pop','lock&pop')
+    ]
+    TEAM_CHOICES = [
+        ('Ck6','ck6'),
+        ('Kclan','kclan'),
+    ]
+    user = models.OneToOneField(UserAccount,on_delete=models.CASCADE)
+    avatar = models.ImageField(default='',upload_to=f'profile_pics/{user.name}')
+    bio = models.TextField()
+    style = models.CharField(choices=STYLES, max_length=50,blank=True,null=True)
+    team = models.CharField(choices=TEAM_CHOICES, max_length=50,blank=True,default='KalaNidhi')
+    slug = models.SlugField(max_length=200)
+
+    def __str__(self):
+        return self.user.name
+
+    def get_absolute_url(self):
+      return reverse('userProfile', kwargs={'slug': self.slug})
+    
+    def save(self, *args, **kwargs):
+      if not self.slug:
+         self.slug = slugify([self.user.name,self.style])
+      return super().save(*args, **kwargs)

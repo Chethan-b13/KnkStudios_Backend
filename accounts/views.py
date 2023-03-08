@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions
 from django.db.utils import DatabaseError
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 
 # Create your views here.
@@ -33,3 +34,23 @@ class SignupView(APIView):
                 return Response({'Error':"Passwords do not match"})
         except DatabaseError as ex:
             return Response({'Error':"User with Email Already Exist"})
+
+
+class MakeAdmin(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self,request,*args,**kwargs):
+        data = self.request.data
+        email = data['email']
+        try:
+            if self.request.user.is_superuser:
+                user = User.objects.get(email=email)
+                user.is_superuser = True
+                user.is_staff = True
+                user.save()
+                return Response({'SUCCESS','User was made as Admin'})
+            else:
+                return Response({'FORBIDDEN','You Have to be an  Admin'})
+        except Exception as e:
+            print(e)
+            return Response({"ERROR","User with Email Doesn't Exists"})
