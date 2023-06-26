@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'accounts',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -78,20 +79,20 @@ WSGI_APPLICATION = 'KalaNidhi.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 DATABASES = {
-       'default': {
-           'ENGINE': 'djongo',
-           'NAME': 'DanceStudio',
-       }
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+# DATABASES = {
+#        'default': {
+#            'ENGINE': 'djongo',
+#            'NAME': 'DanceStudio',
+#        }
+#    }
 
 
 # Password validation
@@ -153,6 +154,18 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 3
+}
+
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
 }
 
 CORS_ORIGIN_ALLOW_ALL = True

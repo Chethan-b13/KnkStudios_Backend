@@ -13,6 +13,9 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save()
 
+        profile = Profile.objects.create(user=user)
+        profile.save()
+
         return user
     
 
@@ -55,6 +58,7 @@ class UserAccount(AbstractBaseUser,PermissionsMixin):
 
 class Profile(models.Model):
     STYLES = [
+        ('Dance','Dance'),
         ('Hiphop','Hiphop'),
         ('FreeStyle','FreeStyle'),
         ('Contemporary','Contemporary'),
@@ -65,19 +69,18 @@ class Profile(models.Model):
         ('Kclan','kclan'),
     ]
     user = models.OneToOneField(UserAccount,on_delete=models.CASCADE)
-    avatar = models.ImageField(default='',upload_to=f'profile_pics/{user.name}')
-    bio = models.TextField()
-    style = models.CharField(choices=STYLES, max_length=50,blank=True,null=True)
+    avatar = models.CharField(max_length=200,blank=True,null=True)
+    bio = models.TextField(blank=True,null=True)
+    style = models.CharField(choices=STYLES, max_length=50,default='Dance')
     team = models.CharField(choices=TEAM_CHOICES, max_length=50,blank=True,default='KalaNidhi')
-    slug = models.SlugField(max_length=200)
+    slug = models.SlugField(max_length=200,blank=True)
 
     def __str__(self):
         return self.user.name
 
     def get_absolute_url(self):
-      return reverse('userProfile', kwargs={'slug': self.slug})
+        return reverse('userProfile', kwargs={'slug': self.slug})
     
     def save(self, *args, **kwargs):
-      if not self.slug:
-         self.slug = slugify([self.user.name,self.style])
-      return super().save(*args, **kwargs)
+        self.slug = slugify(f"{self.user.name}-{self.style}")
+        return super().save(*args, **kwargs)

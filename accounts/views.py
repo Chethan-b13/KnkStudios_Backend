@@ -1,16 +1,20 @@
 from django.contrib.auth import get_user_model
 User = get_user_model()
+from .models import Profile
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.forms.models import model_to_dict
 from rest_framework import permissions
 from django.db.utils import DatabaseError
-from django.contrib.auth.mixins import UserPassesTestMixin
+from .serializers import *
+from drf_yasg.utils import swagger_auto_schema
 
 
 # Create your views here.
 class SignupView(APIView):
     permission_classes = (permissions.AllowAny,)
 
+    @swagger_auto_schema(request_body=SignupSerializer)
     def post(self,request,format=None):
         data = self.request.data
         name = data['name']
@@ -38,9 +42,10 @@ class SignupView(APIView):
 
 class MakeAdmin(APIView):
     permission_classes = (permissions.IsAuthenticated,)
-
-    def post(self,request,*args,**kwargs):
-        data = self.request.data
+    
+    @swagger_auto_schema(request_body=makeAdminSerializer)
+    def post(self,request):
+        data = request.data
         email = data['email']
         try:
             if self.request.user.is_superuser:
@@ -54,3 +59,34 @@ class MakeAdmin(APIView):
         except Exception as e:
             print(e)
             return Response({"ERROR","User with Email Doesn't Exists"})
+        
+
+class UserDetails(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self,request):
+        profile = Profile.objects.get(user=request.user)
+        
+        user_details = {
+            'uid': profile.user.id,
+            'email': profile.user.email,
+            'name': profile.user.name,
+            'is_superuser': profile.user.is_superuser,
+            'avatar': profile.avatar,
+            'bio': profile.bio,
+            'style': profile.style,
+            'team': profile.team,
+            'slug': profile.slug,
+        }
+        return Response(user_details)
+    
+    @swagger_auto_schema(request_body=ProfileSerializer)
+    def put(self,request):
+        data = request.data
+        profile = Profile.objects.get(user=request.user)
+        for key in data.keys():
+            setattr(profile, key, data[key])
+
+        profile.save()
+        return Response(model_to_dict(profile))
+
