@@ -26,18 +26,18 @@ class SignupView(APIView):
 
             if password == password2:
                 if User.objects.filter(email=email).exists():
-                    return Response({'Error':"User with Email Already Exist"})
+                    return Response({'Error':"User with Email Already Exist"},status=500)
                 else:
                     if len(password) < 6 :
-                        return Response({'Error':"Password Length should be greater than 6"})
+                        return Response({'Error':"Password Length should be greater than 6"},status=500)
                     else:
                         user = User.objects.create_user(email=email,name=name,password=password)
                         user.save()
                         return Response({'Success':"User Created SuccessFully"})
             else:
-                return Response({'Error':"Passwords do not match"})
+                return Response({'Error':"Passwords do not match"},status=500)
         except DatabaseError as ex:
-            return Response({'Error':"User with Email Already Exist"})
+            return Response({'Error':"User with Email Already Exist"},status=500)
 
 
 class MakeAdmin(APIView):
