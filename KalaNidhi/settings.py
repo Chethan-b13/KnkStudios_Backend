@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-#jn9hgctk5--hp3s%+p3-$&xscig&fc#(6x@6oped3_wtisf7p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -74,6 +74,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'KalaNidhi.wsgi.application'
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 
 
 # Database
