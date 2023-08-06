@@ -84,3 +84,14 @@ class Profile(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(f"{self.user.name}-{self.style}")
         return super().save(*args, **kwargs)
+    
+class Style(models.Model):
+    name = models.CharField(max_length=50)
+    
+
+    class Meta:
+        verbose_name = ("Style")
+        verbose_name_plural = ("Styles")
+
+    def __str__(self):
+        return self.name

@@ -1,4 +1,5 @@
 from django.db import models
+from accounts.models import Profile
 
 
 
@@ -24,4 +25,28 @@ class Application(models.Model):
 
     def __str__(self):
         return self.full_name
+    
+
+class Post(models.Model):
+    
+    style = models.CharField(max_length=50)
+    media_type = models.IntegerField()
+    shortcode = models.CharField(max_length=50)
+    thumbnail = models.URLField()
+    comments = models.IntegerField()
+    likes = models.IntegerField()
+    views = models.IntegerField()
+    video_url = models.URLField()
+    user = models.ForeignKey(Profile,on_delete=models.CASCADE,blank=True)
+
+    class Meta:
+        verbose_name = ("Post")
+        verbose_name_plural = ("Posts")
+
+    def __str__(self):
+        return self.name
+
+    # def get_absolute_url(self):
+    #     return reverse("Post_detail", kwargs={"pk": self.pk})
+
     
