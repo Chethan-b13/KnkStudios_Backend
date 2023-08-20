@@ -54,6 +54,17 @@ class UserAccount(AbstractBaseUser,PermissionsMixin):
     
     def __str__(self):
         return self.email
+    
+class Style(models.Model):
+    name = models.CharField(max_length=50)
+    
+
+    class Meta:
+        verbose_name = ("Style")
+        verbose_name_plural = ("Styles")
+
+    def __str__(self):
+        return self.name
 
 
 class Profile(models.Model):
@@ -71,7 +82,7 @@ class Profile(models.Model):
     user = models.OneToOneField(UserAccount,on_delete=models.CASCADE)
     avatar = models.CharField(max_length=200,blank=True,null=True)
     bio = models.TextField(blank=True,null=True)
-    style = models.CharField(choices=STYLES, max_length=50,default='Dance')
+    style = models.ManyToManyField(Style)
     team = models.CharField(choices=TEAM_CHOICES, max_length=50,blank=True,default='KalaNidhi')
     slug = models.SlugField(max_length=200,blank=True)
 
@@ -85,13 +96,3 @@ class Profile(models.Model):
         self.slug = slugify(f"{self.user.name}-{self.style}")
         return super().save(*args, **kwargs)
     
-class Style(models.Model):
-    name = models.CharField(max_length=50)
-    
-
-    class Meta:
-        verbose_name = ("Style")
-        verbose_name_plural = ("Styles")
-
-    def __str__(self):
-        return self.name

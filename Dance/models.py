@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import Profile
+import accounts.models as AccountModel
 
 
 
@@ -37,7 +37,7 @@ class Post(models.Model):
     likes = models.IntegerField()
     views = models.IntegerField()
     video_url = models.URLField()
-    user = models.ForeignKey(Profile,on_delete=models.CASCADE,blank=True)
+    user = models.ManyToManyField(AccountModel.Profile,blank=True)
 
     class Meta:
         verbose_name = ("Post")
@@ -48,5 +48,3 @@ class Post(models.Model):
 
     # def get_absolute_url(self):
     #     return reverse("Post_detail", kwargs={"pk": self.pk})
-
-    

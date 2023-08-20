@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'Dance',
     'drf_yasg',
+    'workshops',
 ]
 
 MIDDLEWARE = [
