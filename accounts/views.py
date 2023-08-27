@@ -1,8 +1,11 @@
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from .models import Profile
+from Dance.models import Post
+from Dance.serializers import PostSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
 from django.forms.models import model_to_dict
 from rest_framework import permissions
 from django.db.utils import DatabaseError
@@ -90,3 +93,12 @@ class UserDetails(APIView):
         profile.save()
         return Response(model_to_dict(profile))
 
+
+@swagger_auto_schema(request_body=PostSerializer)
+class UserPostsAPI(RetrieveAPIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = PostSerializer
+    
+    def get_queryset(self):
+        USER = Profile.objects.get(slug=self.request.p)
+        return Post.objects.filter(user=USER.pk)

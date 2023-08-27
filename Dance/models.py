@@ -1,4 +1,5 @@
 from django.db import models
+from django.template.defaultfilters import slugify
 import accounts.models as AccountModel
 
 
@@ -29,22 +30,19 @@ class Application(models.Model):
 
 class Post(models.Model):
     
-    style = models.CharField(max_length=50)
-    media_type = models.IntegerField()
-    shortcode = models.CharField(max_length=50)
-    thumbnail = models.URLField()
-    comments = models.IntegerField()
-    likes = models.IntegerField()
-    views = models.IntegerField()
+    title = models.CharField(max_length=50,default="")
+    style = models.OneToOneField(AccountModel.Style, on_delete=models.DO_NOTHING, blank=True)
     video_url = models.URLField()
-    user = models.ManyToManyField(AccountModel.Profile,blank=True)
-
+    user = models.ManyToManyField(AccountModel.Profile, blank=True)
+    slug = models.CharField(max_length=50)
     class Meta:
         verbose_name = ("Post")
         verbose_name_plural = ("Posts")
 
     def __str__(self):
-        return self.name
-
-    # def get_absolute_url(self):
-    #     return reverse("Post_detail", kwargs={"pk": self.pk})
+        return self.title
+    
+    def save(self,*args, **kwargs):
+        self.slug = slugify(f"{self.title}-{self.style}")
+        return super().save(*args, **kwargs)
+    

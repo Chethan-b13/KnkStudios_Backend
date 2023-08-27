@@ -80,11 +80,11 @@ class Profile(models.Model):
         ('Kclan','kclan'),
     ]
     user = models.OneToOneField(UserAccount,on_delete=models.CASCADE)
-    avatar = models.CharField(max_length=200,blank=True,null=True)
-    bio = models.TextField(blank=True,null=True)
+    avatar = models.CharField(max_length=200, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
     style = models.ManyToManyField(Style)
-    team = models.CharField(choices=TEAM_CHOICES, max_length=50,blank=True,default='KalaNidhi')
-    slug = models.SlugField(max_length=200,blank=True)
+    team = models.CharField(choices=TEAM_CHOICES, max_length=50, blank=True, default='KalaNidhi')
+    slug = models.SlugField(max_length=200, blank=True)
 
     def __str__(self):
         return self.user.name
