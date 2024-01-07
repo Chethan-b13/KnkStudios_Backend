@@ -82,7 +82,7 @@ class Profile(models.Model):
     user = models.OneToOneField(UserAccount,on_delete=models.CASCADE)
     avatar = models.CharField(max_length=200, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
-    style = models.ManyToManyField(Style)
+    style = models.ManyToManyField(Style,blank=True)
     team = models.CharField(choices=TEAM_CHOICES, max_length=50, blank=True, default='KalaNidhi')
     slug = models.SlugField(max_length=200, blank=True)
 
@@ -93,6 +93,8 @@ class Profile(models.Model):
         return reverse('userProfile', kwargs={'slug': self.slug})
     
     def save(self, *args, **kwargs):
+        if not self.id:
+            return super().save(*args, **kwargs)
         self.slug = slugify(f"{self.user.name}-{self.style}")
         return super().save(*args, **kwargs)
     

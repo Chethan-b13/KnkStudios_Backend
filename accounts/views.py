@@ -69,7 +69,8 @@ class UserDetails(APIView):
 
     def get(self,request):
         profile = Profile.objects.get(user=request.user)
-        
+        serializer = ProfileSerializer(profile)
+
         user_details = {
             'uid': profile.user.id,
             'email': profile.user.email,
@@ -77,7 +78,7 @@ class UserDetails(APIView):
             'is_superuser': profile.user.is_superuser,
             'avatar': profile.avatar,
             'bio': profile.bio,
-            'style': profile.style,
+            'style': serializer.style,
             'team': profile.team,
             'slug': profile.slug,
         }
